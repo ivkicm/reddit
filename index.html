@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reddit BoxOffice Radar XXL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: black; color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .header-info { position: fixed; top: 15px; right: 20px; z-index: 100; background: rgba(255, 69, 0, 0.9); color: white; padding: 5px 15px; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 1.3rem; }
+        .slide { position: absolute; width: 100%; height: 100%; display: none; flex-direction: column; }
+        .slide.active { display: flex; animation: fadeIn 0.8s ease-in; }
+        .image-container { width: 100%; height: 55vh; position: relative; overflow: hidden; background: #111; }
+        .image-container img { width: 100%; height: 100%; object-fit: contain; background: #050505; }
+        .no-image-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #1a1a1a; font-size: 5rem; font-weight: 900; color: #333; text-transform: uppercase; }
+        .img-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 20%; background: linear-gradient(to top, black, transparent); }
+        .content-box { flex: 1; padding: 25px 60px; background: black; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 30px; }
+        .meta-line { display: flex; gap: 30px; align-items: center; margin-bottom: 20px; }
+        .source { color: #FF4500; font-weight: 900; font-size: 2.5rem; letter-spacing: 2px; }
+        .pub-time { color: #ffffff; font-family: 'JetBrains Mono'; font-size: 2.2rem; font-weight: 800; }
+        .title { font-size: 4rem; font-weight: 900; line-height: 1.1; text-transform: uppercase; letter-spacing: -1px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; color: #eee; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="header-info">STAND: 23.12.2025 - 07:11</div>
+    
+        <div class="slide active">
+            <div class="content-box">
+                <div class="title">Warte auf neue Beiträge von r/boxoffice...</div>
+            </div>
+        </div>
+        
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let current = 0;
+        function nextSlide() {
+            if (slides.length <= 1) return;
+            slides[current].classList.remove('active');
+            current = (current + 1) % slides.length;
+            slides[current].classList.add('active');
+        }
+        setInterval(nextSlide, 10000); 
+        setTimeout(() => { location.reload(); }, 1800000);
+    </script>
+</body>
+</html>
+    
