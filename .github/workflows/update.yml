@@ -1,0 +1,35 @@
+name: Update Reddit BoxOffice Data
+
+on:
+  schedule:
+    - cron: '*/30 * * * *' # Alle 30 Minuten
+  workflow_dispatch: # Ermöglicht manuellen Start
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Scraper
+        run: python scrape.py
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "actions-user"
+          git config --global user.email "actions@github.com"
+          git add index.html
+          git commit -m "Update Reddit News" || exit 0
+          git push
