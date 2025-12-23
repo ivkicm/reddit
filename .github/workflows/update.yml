@@ -20,7 +20,9 @@ jobs:
           python-version: '3.9'
 
       - name: Install Dependencies
-        run: pip install requests pytz
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run Scraper
         run: python scrape.py
@@ -29,10 +31,9 @@ jobs:
         run: |
           git config --global user.name "actions-user"
           git config --global user.email "actions@github.com"
-          # Prüfen ob index.html existiert, bevor git add ausgeführt wird
           if [ -f index.html ]; then
             git add index.html
-            git commit -m "Update Reddit Data" || echo "Keine Änderungen zu speichern"
+            git commit -m "Update Reddit Data" || echo "Keine Änderungen"
             git push
           else
             echo "Fehler: index.html wurde nicht erstellt!"
