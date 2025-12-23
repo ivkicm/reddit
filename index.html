@@ -9,30 +9,108 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: black; color: white; font-family: 'Inter', sans-serif; overflow: hidden; }
-        .header-info { position: fixed; top: 15px; right: 20px; z-index: 100; background: rgba(255, 69, 0, 0.9); color: white; padding: 5px 15px; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 1.3rem; }
+        .header-info { position: fixed; top: 15px; right: 20px; z-index: 100; background: rgba(255, 69, 0, 0.9); color: white; padding: 5px 15px; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 1.3rem; font-weight: 800; }
         .slide { position: absolute; width: 100%; height: 100%; display: none; flex-direction: column; }
         .slide.active { display: flex; animation: fadeIn 0.8s ease-in; }
-        .image-container { width: 100%; height: 55vh; position: relative; overflow: hidden; background: #111; }
-        .image-container img { width: 100%; height: 100%; object-fit: contain; background: #050505; }
-        .no-image-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #1a1a1a; font-size: 5rem; font-weight: 900; color: #333; text-transform: uppercase; }
+        .image-container { width: 100%; height: 55vh; position: relative; overflow: hidden; background: #050505; }
+        .image-container img { width: 100%; height: 100%; object-fit: contain; object-position: center top; }
+        .no-image-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #111; font-size: 5rem; font-weight: 900; color: #222; text-transform: uppercase; }
         .img-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 20%; background: linear-gradient(to top, black, transparent); }
-        .content-box { flex: 1; padding: 25px 60px; background: black; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 30px; }
+        .content-box { flex: 1; padding: 20px 60px; background: black; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 30px; }
         .meta-line { display: flex; gap: 30px; align-items: center; margin-bottom: 20px; }
-        .source { color: #FF4500; font-weight: 900; font-size: 2.5rem; letter-spacing: 2px; }
-        .pub-time { color: #ffffff; font-family: 'JetBrains Mono'; font-size: 2.2rem; font-weight: 800; }
-        .title { font-size: 4rem; font-weight: 900; line-height: 1.1; text-transform: uppercase; letter-spacing: -1px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; color: #eee; }
+        .source { color: #FF4500; font-weight: 900; font-size: 2.8rem; letter-spacing: 2px; }
+        .pub-time { color: #ffffff; font-family: 'JetBrains Mono'; font-size: 2.8rem; font-weight: 800; }
+        .title { font-size: 4.2rem; font-weight: 900; line-height: 1.05; text-transform: uppercase; letter-spacing: -2px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; color: #f0f0f0; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
-    <div class="header-info">STAND: 23.12.2025 - 07:11</div>
+    <div class="header-info">STAND: 23.12.2025 - 07:19</div>
     
-        <div class="slide active">
-            <div class="content-box">
-                <div class="title">Warte auf neue Beiträge von r/boxoffice...</div>
+            <div class="slide active">
+                <div class="image-container">
+                    <img src="https://preview.redd.it/hz49aez07w8g1.jpeg?width=640&crop=smart&auto=webp&s=b2fb72c65641715cdc66295bef9dfbb3ed894e75" alt="Reddit Image">
+                    <div class="img-overlay"></div>
+                </div>
+                <div class="content-box">
+                    <div class="meta-line">
+                        <span class="source">REDDIT r/BOXOFFICE</span>
+                        <span class="pub-time">06:49 UHR</span>
+                    </div>
+                    <div class="title">Daddy's Home turns 10 this week. The $50m film opened at $38m to leg it to $150m DOM and a WW total of $242m. A sequel was also released</div>
+                </div>
             </div>
-        </div>
-        
+            
+            <div class="slide ">
+                <div class="image-container">
+                    <img src="https://preview.redd.it/5ljyn4hn6w8g1.jpeg?width=320&crop=smart&auto=webp&s=5bed9cd776d8c05923ba8cdf3d3f73ba1f4f5942" alt="Reddit Image">
+                    <div class="img-overlay"></div>
+                </div>
+                <div class="content-box">
+                    <div class="meta-line">
+                        <span class="source">REDDIT r/BOXOFFICE</span>
+                        <span class="pub-time">06:46 UHR</span>
+                    </div>
+                    <div class="title">Wonder Woman 1984 turns Five years old this week. The 200M Wonder Woman sequel was impacted by the pandemic and had a simultaneous streaming release. It grossed 46.8M Domestically and 169.6M Worldwide while Also receiving negative reviews. A third WW Film was scrapped due to DC rebooting.</div>
+                </div>
+            </div>
+            
+            <div class="slide ">
+                <div class="image-container">
+                    <img src="https://preview.redd.it/8ondp09r5w8g1.jpeg?width=320&crop=smart&auto=webp&s=ef6a2d213ef74d4f96d3edfec0ab3416a16f1ce4" alt="Reddit Image">
+                    <div class="img-overlay"></div>
+                </div>
+                <div class="content-box">
+                    <div class="meta-line">
+                        <span class="source">REDDIT r/BOXOFFICE</span>
+                        <span class="pub-time">06:41 UHR</span>
+                    </div>
+                    <div class="title">A Complete Unknown turns One. The 60-70M Bob Dylan Biopic grossed 75 Million domestically and 140.5M Worldwide. It Received positive reviews and was nominated for 8 Oscars.</div>
+                </div>
+            </div>
+            
+            <div class="slide ">
+                <div class="image-container">
+                    <img src="https://preview.redd.it/2l6gtzkh4w8g1.jpeg?width=640&crop=smart&auto=webp&s=e98b2570c36efd53a1730fcce8d3c337ba273cf3" alt="Reddit Image">
+                    <div class="img-overlay"></div>
+                </div>
+                <div class="content-box">
+                    <div class="meta-line">
+                        <span class="source">REDDIT r/BOXOFFICE</span>
+                        <span class="pub-time">06:34 UHR</span>
+                    </div>
+                    <div class="title">True Grit turns 15. The Coen brothers’ $35 million Oscar-nominated Western adaptation made $171 million domestically ($245 million adjusted) & $252 million worldwide. It was also Hailee Steinfeld’s first film.</div>
+                </div>
+            </div>
+            
+            <div class="slide ">
+                <div class="image-container">
+                    <img src="https://preview.redd.it/91tfk5ry3w8g1.jpeg?width=320&crop=smart&auto=webp&s=5f3fd6d5d5e9db97411bfb31eba4bd7b4c462918" alt="Reddit Image">
+                    <div class="img-overlay"></div>
+                </div>
+                <div class="content-box">
+                    <div class="meta-line">
+                        <span class="source">REDDIT r/BOXOFFICE</span>
+                        <span class="pub-time">06:31 UHR</span>
+                    </div>
+                    <div class="title">Cast Away was released 25 years ago this week. The $90 million film grossed $233.6 million domestically and $429.6 million worldwide. The film was nominated 2 Oscars including Best Actor for Tom Hanks.</div>
+                </div>
+            </div>
+            
+            <div class="slide ">
+                <div class="image-container">
+                    <img src="https://preview.redd.it/kg6a6vfy2w8g1.jpeg?width=640&crop=smart&auto=webp&s=5451c092b9e23c41658b392cb4f86c14d2bc004e" alt="Reddit Image">
+                    <div class="img-overlay"></div>
+                </div>
+                <div class="content-box">
+                    <div class="meta-line">
+                        <span class="source">REDDIT r/BOXOFFICE</span>
+                        <span class="pub-time">06:25 UHR</span>
+                    </div>
+                    <div class="title">"Thunderball" was released 60 years ago this week. The fourth James Bond film had a budget of $9 million and grossed $141.2 million worldwide. It was the highest-grossing film in the franchise for 12 years. It won the Academy Award for Visual Effects.</div>
+                </div>
+            </div>
+            
     <script>
         const slides = document.querySelectorAll('.slide');
         let current = 0;
