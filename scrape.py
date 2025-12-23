@@ -1,68 +1,67 @@
 import requests
+import feedparser
+from bs4 import BeautifulSoup
 from datetime import datetime
 import pytz
 import os
 import html
 
 def get_reddit_posts():
-    url = "https://www.reddit.com/r/boxoffice/new.json?limit=15"
+    # Wir nutzen den RSS-Feed, der wird seltener blockiert
+    url = "https://www.reddit.com/r/boxoffice/new/.rss"
     
-    # SEHR WICHTIG: Ein extrem spezifischer User-Agent, um nicht blockiert zu werden
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 DashboardNewsBot/1.0'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     }
     
     try:
-        response = requests.get(url, headers=headers, timeout=20)
-        # Falls Reddit blockt, Fehlermeldung ausgeben
-        if response.status_code != 200:
-            print(f"Reddit API Fehler: {response.status_code}")
-            return []
-
-        data = response.json()
+        # Feed laden
+        feed = feedparser.parse(url)
         posts = []
         tz = pytz.timezone('Europe/Berlin')
         
-        for post in data['data']['children']:
-            p = post['data']
-            if p.get('is_ad') or p.get('stickied'):
-                continue
-                
+        for entry in feed.entries:
+            # Bild aus dem Content extrahieren (Reddit versteckt das im HTML des Feeds)
             image_url = None
-            if p.get('post_hint') == 'image' or p.get('url', '').endswith(('.jpg', '.png', '.webp')):
-                image_url = p.get('url')
-            elif 'preview' in p and 'images' in p['preview']:
-                image_url = p['preview']['images'][0]['source']['url']
-            
-            if image_url:
-                image_url = html.unescape(image_url)
+            if 'summary' in entry:
+                soup_content = BeautifulSoup(entry.summary, 'html.parser')
+                img_tag = soup_content.find('img')
+                if img_tag:
+                    image_url = img_tag.get('src')
+                
+                # Check für Thumbnails, falls kein großes Bild da ist
+                if not image_url:
+                    thumb = soup_content.find('span', {'class': 'thumbnail'})
+                    if thumb and thumb.find('img'):
+                        image_url = thumb.find('img').get('src')
 
-            dt = datetime.fromtimestamp(p['created_utc'], pytz.utc).astimezone(tz)
+            # Zeit formatieren
+            dt = datetime(*entry.updated_parsed[:6], tzinfo=pytz.utc).astimezone(tz)
             
             posts.append({
-                'title': p['title'],
-                'author': p['author'],
+                'title': entry.title,
+                'author': entry.author if 'author' in entry else 'r/boxoffice',
                 'image': image_url,
                 'time_str': dt.strftime("%H:%M"),
                 'time_obj': dt
             })
+            
             if len(posts) >= 6: break
             
         return posts
     except Exception as e:
-        print(f"Allgemeiner Fehler: {e}")
+        print(f"Reddit RSS Fehler: {e}")
         return []
 
 def generate_html(news):
     tz = pytz.timezone('Europe/Berlin')
     now = datetime.now(tz).strftime("%d.%m.%Y - %H:%M")
     
-    # Wenn keine News da sind, erstellen wir eine "Wartenseite" statt gar nichts
     if not news:
         slides_html = """
         <div class="slide active">
             <div class="content-box">
-                <div class="title">Warte auf neue Beiträge von r/boxoffice...</div>
+                <div class="title" style="color: #ff4500;">Reddit blockiert aktuell den Zugriff.<br>Versuche es in 30 Minuten erneut.</div>
             </div>
         </div>
         """
@@ -70,8 +69,13 @@ def generate_html(news):
         slides_html = ""
         for i, item in enumerate(news):
             active_class = "active" if i == 0 else ""
-            img_html = f'<img src="{item["image"]}" alt="News">' if item['image'] else '<div class="no-image-placeholder"><span>r/boxoffice</span></div>'
             
+            # Falls ein Bild da ist, zeigen wir es an
+            if item['image']:
+                img_html = f'<img src="{item["image"]}" alt="Reddit Image">'
+            else:
+                img_html = '<div class="no-image-placeholder"><span>r/boxoffice</span></div>'
+
             slides_html += f"""
             <div class="slide {active_class}">
                 <div class="image-container">
@@ -99,18 +103,18 @@ def generate_html(news):
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
         body, html {{ margin: 0; padding: 0; width: 100%; height: 100%; background-color: black; color: white; font-family: 'Inter', sans-serif; overflow: hidden; }}
-        .header-info {{ position: fixed; top: 15px; right: 20px; z-index: 100; background: rgba(255, 69, 0, 0.9); color: white; padding: 5px 15px; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 1.3rem; }}
+        .header-info {{ position: fixed; top: 15px; right: 20px; z-index: 100; background: rgba(255, 69, 0, 0.9); color: white; padding: 5px 15px; border-radius: 8px; font-family: 'JetBrains Mono'; font-size: 1.3rem; font-weight: 800; }}
         .slide {{ position: absolute; width: 100%; height: 100%; display: none; flex-direction: column; }}
         .slide.active {{ display: flex; animation: fadeIn 0.8s ease-in; }}
-        .image-container {{ width: 100%; height: 55vh; position: relative; overflow: hidden; background: #111; }}
-        .image-container img {{ width: 100%; height: 100%; object-fit: contain; background: #050505; }}
-        .no-image-placeholder {{ width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #1a1a1a; font-size: 5rem; font-weight: 900; color: #333; text-transform: uppercase; }}
+        .image-container {{ width: 100%; height: 55vh; position: relative; overflow: hidden; background: #050505; }}
+        .image-container img {{ width: 100%; height: 100%; object-fit: contain; object-position: center top; }}
+        .no-image-placeholder {{ width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #111; font-size: 5rem; font-weight: 900; color: #222; text-transform: uppercase; }}
         .img-overlay {{ position: absolute; bottom: 0; left: 0; width: 100%; height: 20%; background: linear-gradient(to top, black, transparent); }}
-        .content-box {{ flex: 1; padding: 25px 60px; background: black; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 30px; }}
+        .content-box {{ flex: 1; padding: 20px 60px; background: black; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 30px; }}
         .meta-line {{ display: flex; gap: 30px; align-items: center; margin-bottom: 20px; }}
-        .source {{ color: #FF4500; font-weight: 900; font-size: 2.5rem; letter-spacing: 2px; }}
-        .pub-time {{ color: #ffffff; font-family: 'JetBrains Mono'; font-size: 2.2rem; font-weight: 800; }}
-        .title {{ font-size: 4rem; font-weight: 900; line-height: 1.1; text-transform: uppercase; letter-spacing: -1px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; color: #eee; }}
+        .source {{ color: #FF4500; font-weight: 900; font-size: 2.8rem; letter-spacing: 2px; }}
+        .pub-time {{ color: #ffffff; font-family: 'JetBrains Mono'; font-size: 2.8rem; font-weight: 800; }}
+        .title {{ font-size: 4.2rem; font-weight: 900; line-height: 1.05; text-transform: uppercase; letter-spacing: -2px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; color: #f0f0f0; }}
         @keyframes fadeIn {{ from {{ opacity: 0; }} to {{ opacity: 1; }} }}
     </style>
 </head>
@@ -136,7 +140,5 @@ def generate_html(news):
         f.write(html_content)
 
 if __name__ == "__main__":
-    posts = get_reddit_posts()
-    # WICHTIG: Wir rufen generate_html IMMER auf, auch wenn posts leer ist
-    # So wird auf jeden Fall eine index.html erstellt (Warteseite)
-    generate_html(posts)
+    data = get_reddit_posts()
+    generate_html(data)
