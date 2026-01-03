@@ -2,11 +2,18 @@ name: Update Reddit Data
 
 on:
   schedule:
-    # 0,30 = Läuft zur vollen und zur halben Stunde
-    # 5-22 = Von 05:00 UTC bis 22:59 UTC
-    # Entspricht in DE: 06:00 Uhr morgens bis 23:59 Uhr nachts
-    - cron: '0,30 5-22 * * *'
-  workflow_dispatch:
+    # ZEITPLAN: Alle 90 Minuten zwischen 08:00 und 20:00 Uhr (DE-Winterzeit)
+    # GitHub nutzt UTC-Zeit (Deutschland -1 Stunde).
+    
+    # Runde 1: Volle Stunden (07:00, 10:00, 13:00, 16:00, 19:00 UTC)
+    # Entspricht DE: 08:00, 11:00, 14:00, 17:00, 20:00 Uhr
+    - cron: '0 7,10,13,16,19 * * *'
+    
+    # Runde 2: Halbe Stunden (08:30, 11:30, 14:30, 17:30 UTC)
+    # Entspricht DE: 09:30, 12:30, 15:30, 18:30 Uhr
+    - cron: '30 8,11,14,17 * * *'
+    
+  workflow_dispatch: # Erlaubt manuellen Start bei Bedarf
 
 jobs:
   build:
@@ -34,10 +41,12 @@ jobs:
         run: |
           git config --global user.name "actions-user"
           git config --global user.email "actions@github.com"
+          
+          # Prüfen ob index.html existiert
           if [ -f index.html ]; then
             git add index.html
-            # Verhindert Fehler, falls keine neuen Reddit-Posts gefunden wurden
-            git commit -m "Update Reddit Data (Scheduled)" || echo "Keine Änderungen"
+            # Nur committen, wenn es wirklich Änderungen gibt (verhindert leere Builds)
+            git commit -m "Update Reddit Data (08-20h)" || echo "Keine neuen Daten gefunden"
             git push
           else
             echo "Fehler: index.html wurde nicht erstellt!"
